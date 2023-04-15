@@ -2,6 +2,16 @@
 @use 'sass:map';
 @use './../../skrauzodoro-theme' as skr;
 
+.navbar {
+  & .title-annotation {
+    color: map-get($map: skr.$skr-amber-palette, $key: 800) !important;
+    position: absolute;
+    font-size: 16px;
+    left: 76px;
+    bottom: 0px;
+  }
+}
+
 .toolbar {
   height: 50px;
 }
