@@ -89,5 +89,21 @@ export class ProjectsService {
   }
 
   // Delete
-  deleteProject(id: string) {}
+  deleteProject(id: string) {
+    const projects = this.getProjects();
+
+    let index: number = -1;
+    projects.forEach((pr: Project, i) => {
+      if(pr._id === id) {
+        index = i;
+      }
+    })
+    if (index == -1) {
+      return;
+    }
+
+    const updatedProjects = [...projects.slice(0,index), ...projects.slice(index + 1)]
+
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
+  }
 }
