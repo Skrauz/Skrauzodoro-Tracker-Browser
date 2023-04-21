@@ -1,75 +1,109 @@
 import { Injectable } from '@angular/core';
 import { Project } from './projectModel';
-import { Observable, Subject } from 'rxjs';
-import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectsService {
-  constructor(private httpClient: HttpClient) {}
-
-  private url = 'http://localhost:5050/api/projects';
-
-  private projects$: Subject<Project[]> = new Subject();
-  private projects: Project[] = [];
+  createEmptyProjectsItem() {
+    const newProjectArray: Project[] = [];
+    localStorage.setItem('projects', JSON.stringify(newProjectArray));
+  }
 
   // Read
-  getProjects(): Subject<Project[]> {
-    this.httpClient.get<Project[]>(this.url).subscribe((projects) => {
-      this.projects = projects;
-      this.projects$.next(projects);
-    });
-    return this.projects$;
-  }
-
-  getProject(projectName: string): Subject<Project> {
-    let project$: Subject<Project> = new Subject();
-    this.httpClient
-      .get<Project>(`${this.url}/${projectName}`)
-      .subscribe((project) => {
-        project$.next(project);
-      });
-    return project$;
-  }
-
-  // Create
-  createProject(project: Project): Observable<string> {
-    if (this.hasDuplicates(project)) {
-      alert('Project names must be unique');
-      return new Observable();
+  getProjects(): Project[] {
+    if (!localStorage.getItem('projects')) {
+      this.createEmptyProjectsItem();
     }
-    let response = this.httpClient.post(this.url, project, {
-      responseType: 'text',
-    });
-    return response;
+
+    const projects: Project[] = JSON.parse(localStorage.getItem('projects')!);
+    return projects;
   }
 
-  hasDuplicates(project: Project): boolean {
-    let duplicates: boolean = false;
-    this.projects.forEach((pr) => {
-      if (pr.name == project.name) {
-        alert('Project names must be unique');
-        duplicates = true;
+  getProject(projectName: string): Project | void {
+    if (!localStorage.getItem('projects')) {
+      this.createEmptyProjectsItem();
+    }
+
+    let project: Project | null = null;
+    const projects: Project[] = JSON.parse(localStorage.getItem('projects')!);
+    projects.forEach((pr: Project) => {
+      if (projectName === pr.name) {
+        project = pr;
         return;
       }
     });
-    return duplicates;
+
+    if (project) return project;
+
+    alert(`Project of the name '${projectName}' not found`);
+  }
+
+  // Create
+  createProject(project: Project) {
+    if (this.hasDuplicates(project)) {
+      return;
+    }
+
+    if (!localStorage.getItem('projects')) {
+      this.createEmptyProjectsItem();
+    }
+
+    let projects: Project[] = this.getProjects();
+    projects.push(project);
+    localStorage.setItem('projects', JSON.stringify(projects));
+  }
+
+  hasDuplicates(project: Project): boolean {
+    let projects = this.getProjects();
+    let duplicatesExist: boolean = false;
+
+    projects.forEach((pr: Project) => {
+      if (pr.name === project.name) {
+        alert('Project names must be unique');
+        duplicatesExist = true;
+        return;
+      }
+    });
+
+    return duplicatesExist;
   }
 
   // Update
-  updateProject(project: Project): Observable<string> {
-    let response = this.httpClient.put(`${this.url}/${project._id}`, project, {
-      responseType: 'text',
-    });
-    return response;
+  updateProject(project: Project) {
+    const projects = this.getProjects();
+
+    let index: number = -1;
+    projects.forEach((pr: Project, i) => {
+      if(pr.name === project.name) {
+        index = i;
+      }
+    })
+    if (index == -1) {
+      return;
+    }
+
+    const updatedProjects = [...projects.slice(0,index), project, ...projects.slice(index + 1)]
+
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
   }
 
   // Delete
-  deleteProject(id: string): Observable<string> {
-    let response = this.httpClient.delete(`${this.url}/${id}`, {
-      responseType: 'text',
-    });
-    return response;
+  deleteProject(id: string) {
+    const projects = this.getProjects();
+
+    let index: number = -1;
+    projects.forEach((pr: Project, i) => {
+      if(pr._id === id) {
+        index = i;
+      }
+    })
+    if (index == -1) {
+      return;
+    }
+
+    const updatedProjects = [...projects.slice(0,index), ...projects.slice(index + 1)]
+
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
   }
 }

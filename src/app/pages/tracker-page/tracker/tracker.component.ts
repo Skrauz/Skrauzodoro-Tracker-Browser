@@ -5,7 +5,6 @@ import { TimespansService } from 'src/app/database/timespans/timespans.service';
 import { SoundService } from 'src/app/sound-service/sound.service';
 import { Project } from 'src/app/database/projects/projectModel';
 import { ProjectsService } from 'src/app/database/projects/projects.service';
-import { Observable } from 'rxjs';
 import { OrderByPipe } from 'src/app/order-by-pipe/order-by.pipe';
 
 
@@ -28,10 +27,10 @@ export class TrackerComponent implements OnDestroy, OnInit {
       this.refreshProjects();
   }
 
-  projects$: Observable<Project[]> = new Observable();
+  projects: Project[] = [];
 
   refreshProjects() {
-    this.projects$ = this.projectsService.getProjects();
+    this.projects = this.projectsService.getProjects();
   }
 
   ngOnDestroy() {
