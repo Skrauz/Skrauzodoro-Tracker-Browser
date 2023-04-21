@@ -5,29 +5,33 @@ import { Project } from './projectModel';
   providedIn: 'root',
 })
 export class ProjectsService {
-
   // Read
   getProjects(): Project[] {
-    if(localStorage.getItem("projects"))
-    {
-      const projects: Project[] = JSON.parse(localStorage.getItem("projects")!);
+    if (localStorage.getItem('projects')) {
+      const projects: Project[] = JSON.parse(localStorage.getItem('projects')!);
       return projects;
     }
     return [];
   }
 
-  getProject(projectName: string): Project {
-    if(localStorage.getItem("projects"))
-    {
-      let project: Project;
-      const projects: Project[] = JSON.parse(localStorage.getItem("projects")!);
-      projects.forEach((pr: Project) => {
-        if(projectName === pr.name) {
-          project = pr;
-        }
-      })
-      return project;
+  // Read One
+  getProject(projectName: string): Project | void {
+    if (!localStorage.getItem('projects')) {
+      alert('Projects not found');
+      return;
     }
+
+    let project: Project | null = null;
+    const projects: Project[] = JSON.parse(localStorage.getItem('projects')!);
+    projects.forEach((pr: Project) => {
+      if (projectName === pr.name) {
+        project = pr;
+      }
+    });
+
+    if (project) return project;
+
+    alert(`Project of the name '${projectName}' not found`);
   }
 
   // Create
@@ -36,19 +40,17 @@ export class ProjectsService {
       alert('Project names must be unique');
       return;
     }
-    if(localStorage.getItem("projects"))
-    {
-      let projects: Project[] = JSON.parse(localStorage.getItem("projects")!);
+    if (localStorage.getItem('projects')) {
+      let projects: Project[] = JSON.parse(localStorage.getItem('projects')!);
       projects.push(project);
-      localStorage.setItem("projects", JSON.stringify(projects));
+      localStorage.setItem('projects', JSON.stringify(projects));
     }
   }
 
   hasDuplicates(project: Project): boolean {
     let duplicatesExist: boolean = false;
-    if(localStorage.getItem("projects"))
-    {
-      JSON.parse(localStorage.getItem("projects")!).forEach((pr: Project) => {
+    if (localStorage.getItem('projects')) {
+      JSON.parse(localStorage.getItem('projects')!).forEach((pr: Project) => {
         if (pr.name === project.name) {
           alert('Project names must be unique');
           duplicatesExist = true;
@@ -60,18 +62,8 @@ export class ProjectsService {
   }
 
   // Update
-  updateProject(project: Project): Observable<string> {
-    let response = this.httpClient.put(`${this.url}/${project._id}`, project, {
-      responseType: 'text',
-    });
-    return response;
-  }
+  updateProject(project: Project) {}
 
   // Delete
-  deleteProject(id: string): Observable<string> {
-    let response = this.httpClient.delete(`${this.url}/${id}`, {
-      responseType: 'text',
-    });
-    return response;
-  }
+  deleteProject(id: string) {}
 }
