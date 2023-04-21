@@ -5,14 +5,13 @@ import { Project } from './projectModel';
   providedIn: 'root',
 })
 export class ProjectsService {
-
   createEmptyProjectsItem() {
     const newProjectArray: Project[] = [];
     localStorage.setItem('projects', JSON.stringify(newProjectArray));
   }
 
   // Read
-  getProjects(): Project[] | void {
+  getProjects(): Project[] {
     if (!localStorage.getItem('projects')) {
       this.createEmptyProjectsItem();
     }
@@ -31,6 +30,7 @@ export class ProjectsService {
     projects.forEach((pr: Project) => {
       if (projectName === pr.name) {
         project = pr;
+        return;
       }
     });
 
@@ -42,27 +42,30 @@ export class ProjectsService {
   // Create
   createProject(project: Project) {
     if (this.hasDuplicates(project)) {
-      alert('Project names must be unique');
       return;
     }
-    if (localStorage.getItem('projects')) {
-      let projects: Project[] = JSON.parse(localStorage.getItem('projects')!);
-      projects.push(project);
-      localStorage.setItem('projects', JSON.stringify(projects));
+
+    if (!localStorage.getItem('projects')) {
+      this.createEmptyProjectsItem();
     }
+
+    let projects: Project[] = this.getProjects();
+    projects.push(project);
+    localStorage.setItem('projects', JSON.stringify(projects));
   }
 
   hasDuplicates(project: Project): boolean {
+    let projects = this.getProjects();
     let duplicatesExist: boolean = false;
-    if (localStorage.getItem('projects')) {
-      JSON.parse(localStorage.getItem('projects')!).forEach((pr: Project) => {
-        if (pr.name === project.name) {
-          alert('Project names must be unique');
-          duplicatesExist = true;
-          return;
-        }
-      });
-    }
+
+    projects.forEach((pr: Project) => {
+      if (pr.name === project.name) {
+        alert('Project names must be unique');
+        duplicatesExist = true;
+        return;
+      }
+    });
+
     return duplicatesExist;
   }
 
