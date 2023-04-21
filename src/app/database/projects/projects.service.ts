@@ -5,20 +5,25 @@ import { Project } from './projectModel';
   providedIn: 'root',
 })
 export class ProjectsService {
-  // Read
-  getProjects(): Project[] {
-    if (localStorage.getItem('projects')) {
-      const projects: Project[] = JSON.parse(localStorage.getItem('projects')!);
-      return projects;
-    }
-    return [];
+
+  createEmptyProjectsItem() {
+    const newProjectArray: Project[] = [];
+    localStorage.setItem('projects', JSON.stringify(newProjectArray));
   }
 
-  // Read One
+  // Read
+  getProjects(): Project[] | void {
+    if (!localStorage.getItem('projects')) {
+      this.createEmptyProjectsItem();
+    }
+
+    const projects: Project[] = JSON.parse(localStorage.getItem('projects')!);
+    return projects;
+  }
+
   getProject(projectName: string): Project | void {
     if (!localStorage.getItem('projects')) {
-      alert('Projects not found');
-      return;
+      this.createEmptyProjectsItem();
     }
 
     let project: Project | null = null;
