@@ -70,7 +70,23 @@ export class ProjectsService {
   }
 
   // Update
-  updateProject(project: Project) {}
+  updateProject(project: Project) {
+    const projects = this.getProjects();
+
+    let index: number = -1;
+    projects.forEach((pr: Project, i) => {
+      if(pr.name === project.name) {
+        index = i;
+      }
+    })
+    if (index == -1) {
+      return;
+    }
+
+    const updatedProjects = [...projects.slice(0,index), project, ...projects.slice(index + 1)]
+
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
+  }
 
   // Delete
   deleteProject(id: string) {}
