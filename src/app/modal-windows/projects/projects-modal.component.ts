@@ -6,7 +6,6 @@ import {
 } from 'mdb-angular-ui-kit/modal';
 import { ProjectsService } from 'src/app/database/projects/projects.service';
 import { Project } from 'src/app/database/projects/projectModel';
-import { Observable } from 'rxjs';
 
 import { EditProjectComponent } from './edit-project/edit-project.component';
 
@@ -20,7 +19,7 @@ import { EditProjectComponent } from './edit-project/edit-project.component';
   ],
 })
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProjectsModalComponent implements OnInit {
   constructor(
@@ -31,16 +30,16 @@ export class ProjectsModalComponent implements OnInit {
 
   showFinishedProjects?: boolean;
 
-  projects$: Observable<Project[]> = new Observable();
+  projects: Project[] = [];
+
+  editProjectModalRef?: MdbModalRef<EditProjectComponent> | null = null;
 
   ngOnInit(): void {
     this.refreshProjects();
   }
 
-  editProjectModalRef?: MdbModalRef<EditProjectComponent> | null = null;
-
   refreshProjects() {
-    this.projects$ = this.projectsService.getProjects();
+    this.projects = this.projectsService.getProjects();
   }
 
   openEditProject(name$: string) {
@@ -50,15 +49,7 @@ export class ProjectsModalComponent implements OnInit {
   }
 
   deleteProject(id: string) {
-    const response = this.projectsService.deleteProject(id);
-    response.subscribe({
-      next: () => {
-        this.refreshProjects();
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Failed to delete the project')
-      },
-    });
+    this.projectsService.deleteProject(id);
+    this.refreshProjects();
   }
 }
