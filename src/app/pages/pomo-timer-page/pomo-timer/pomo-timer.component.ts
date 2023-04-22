@@ -6,7 +6,6 @@ import { SoundService } from 'src/app/sound-service/sound.service';
 import { Project } from 'src/app/database/projects/projectModel';
 import { ProjectsService } from 'src/app/database/projects/projects.service';
 import { SettingsService } from 'src/app/settings-service/settings.service';
-import { Observable } from 'rxjs';
 import { OrderByPipe } from 'src/app/order-by-pipe/order-by.pipe';
 
 @Component({
@@ -90,6 +89,7 @@ export class PomoTimerComponent implements OnDestroy {
     if (this.timerOn) {
       return;
     }
+
     this.timerOn = true;
     this.startTime = new Date();
     this.clockInterval = setInterval(() => {
@@ -112,6 +112,7 @@ export class PomoTimerComponent implements OnDestroy {
     if (this.currentSetting == 'focusSession') {
       this.pomoStreak++;
     }
+
     this.stopTimer();
     this.soundService.playAlarm();
     // switch to the next setting
@@ -123,22 +124,25 @@ export class PomoTimerComponent implements OnDestroy {
   }
 
   setNextSetting() {
-    if (this.currentSetting == 'focusSession') {
-      if (this.pomoStreak >= this.pomosTillLongBreak) {
-        this.pomoStreak = 0;
-        this.currentSetting = 'longBreak';
-        return;
-      }
-      this.currentSetting = 'shortBreak';
+    if (this.currentSetting !== 'focusSession') {
+      this.currentSetting = 'focusSession';
       return;
     }
-    this.currentSetting = 'focusSession';
+
+    if (this.pomoStreak >= this.pomosTillLongBreak) {
+      this.pomoStreak = 0;
+      this.currentSetting = 'longBreak';
+      return;
+    }
+
+    this.currentSetting = 'shortBreak';
   }
 
   stopTimer() {
     if (!this.timerOn) {
       return;
     }
+
     this.timerOn = false;
     if (this.currentSetting == 'focusSession') {
       // Add record to the database
