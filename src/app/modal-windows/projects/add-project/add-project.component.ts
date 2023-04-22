@@ -44,17 +44,7 @@ export class AddProjectComponent {
   addProject(projectName: string) {
     if (!projectName) return;
 
-    const response = this.projectsService.createProject({ name: projectName });
-    response.subscribe({
-      next: () => {
-        // console.log('project saved successfuly');
-        this.projectsModalComponent.refreshProjects();
-      },
-      error: (err) => {
-        alert('Failed to create a project');
-        console.error(err);
-      },
-    });
+    this.projectsService.createProject({ name: projectName });
     this.projectName = '';
   }
 }

@@ -3,7 +3,6 @@ import { MdbModalRef } from 'mdb-angular-ui-kit/modal';
 import { ProjectsService } from 'src/app/database/projects/projects.service';
 import { Project } from 'src/app/database/projects/projectModel';
 import { ProjectsModalComponent } from '../projects-modal.component';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-edit-project',
@@ -55,18 +54,21 @@ import { BehaviorSubject } from 'rxjs';
   ],
 })
 export class EditProjectComponent implements OnInit {
-  name: string = '';
-  project!: Project;
+
   constructor(
     public modalRef: MdbModalRef<EditProjectComponent>,
     private projectsService: ProjectsService,
     private projectsModalComponent: ProjectsModalComponent
   ) {}
 
+  name: string = '';
+  project!: Project;
+
   ngOnInit(): void {
-    this.projectsService.getProject(this.name).subscribe((project$) => {
-      this.project = project$;
-    });
+    let project: Project | void = this.projectsService.getProject(this.name);
+    if(project) {
+      this.project = project;
+    }
   }
 
   updateProject(projectName: string | null) {
@@ -74,17 +76,8 @@ export class EditProjectComponent implements OnInit {
       alert('Project name is required');
       return;
     }
-    const response = this.projectsService.updateProject(this.project);
-    response.subscribe({
-      next: (res) => {
-        // console.log(res);
-        this.projectsModalComponent.refreshProjects();
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Failed to update the project');
-      },
-    });
+    this.projectsService.updateProject(this.project);
+    this.projectsModalComponent.refreshProjects();
     this.modalRef.close();
     this.name = '';
   }
