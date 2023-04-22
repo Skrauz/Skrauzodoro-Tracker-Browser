@@ -22,7 +22,7 @@ export class IntegrationsModalComponent implements OnInit {
   ngOnInit(): void {
     if (getCookie('TodoistAPIToken')) {
       this.todoistToken = getCookie('TodoistAPIToken');
-      this.constructApi(this.todoistToken)
+      this.constructApi(this.todoistToken);
     }
   }
 
@@ -56,22 +56,19 @@ export class IntegrationsModalComponent implements OnInit {
   }
 
   importProjects() {
-    if (this.todoistApi) {
-      this.todoistApi
-        .getProjects()
-        .then((projects) => {
-          projects.forEach((project) => {
-            let respone = this.projectsService.createProject({
-              name: project.name,
-            });
-            respone.subscribe(
-              (respone) => {
-                // console.log(respone);
-              }
-            );
-          });
-        })
-        .catch((error) => console.log(error));
+    if (!this.todoistApi) {
+      return;
     }
+
+    this.todoistApi
+      .getProjects()
+      .then((projects) => {
+        projects.forEach((project) => {
+          this.projectsService.createProject({
+            name: project.name,
+          });
+        });
+      })
+      .catch((error) => console.error(error));
   }
 }

@@ -24,27 +24,9 @@ export class PomoTimerComponent implements OnDestroy {
     private settingsService: SettingsService,
     public soundService: SoundService,
     private projectsService: ProjectsService
-  ) {
-    this.currentSetting = 'focusSession';
-    this.refreshTimer(this.currentSetting);
-  }
+  ) {}
 
-  ngOnDestroy() {
-    this.titleService.setTitle('Skrauzodoro Timer');
-    if (this.timerOn) {
-      this.stopTimer();
-    }
-  }
-
-  ngOnInit(): void {
-    this.refreshProjects();
-  }
-
-  projects$: Observable<Project[]> = new Observable();
-
-  refreshProjects() {
-    this.projects$ = this.projectsService.getProjects();
-  }
+  projects: Project[] = [];
 
   timeString: string = '';
 
@@ -57,13 +39,25 @@ export class PomoTimerComponent implements OnDestroy {
   pomosTillLongBreak = this.settingsService.settings.pomosUntilLongBreak;
   autoplay = this.settingsService.settings.pomodoroAutoplay;
 
-  currentSetting: 'focusSession' | 'shortBreak' | 'longBreak';
+  currentSetting: 'focusSession' | 'shortBreak' | 'longBreak' = 'focusSession';
 
   timerOn = false;
   seconds = 0;
   pomoStreak = 0;
   startTime: Date = new Date();
   clockInterval?: NodeJS.Timer;
+
+  ngOnInit(): void {
+    this.refreshTimer(this.currentSetting);
+    this.projects = this.projectsService.getProjects();
+  }
+
+  ngOnDestroy() {
+    this.titleService.setTitle('Skrauzodoro Timer');
+    if (this.timerOn) {
+      this.stopTimer();
+    }
+  }
 
   setSetting(setting: 'focusSession' | 'shortBreak' | 'longBreak') {
     this.currentSetting = setting;
@@ -93,17 +87,18 @@ export class PomoTimerComponent implements OnDestroy {
   }
 
   startTimer() {
-    if (!this.timerOn) {
-      this.timerOn = true;
-      this.startTime = new Date();
-      this.clockInterval = setInterval(() => {
-        this.seconds--;
-        this.refreshTimeString(this.seconds);
-        if (this.seconds + 1 == 0) {
-          this.finishTimer();
-        }
-      }, 1000);
+    if (this.timerOn) {
+      return;
     }
+    this.timerOn = true;
+    this.startTime = new Date();
+    this.clockInterval = setInterval(() => {
+      this.seconds--;
+      this.refreshTimeString(this.seconds);
+      if (this.seconds + 1 == 0) {
+        this.finishTimer();
+      }
+    }, 1000);
   }
 
   manualFinishTimer() {
@@ -120,14 +115,14 @@ export class PomoTimerComponent implements OnDestroy {
     this.stopTimer();
     this.soundService.playAlarm();
     // switch to the next setting
-    this.nextSetting();
+    this.setNextSetting();
     this.refreshTimer(this.currentSetting);
     if (this.autoplay) {
       this.startTimer();
     }
   }
 
-  nextSetting() {
+  setNextSetting() {
     if (this.currentSetting == 'focusSession') {
       if (this.pomoStreak >= this.pomosTillLongBreak) {
         this.pomoStreak = 0;
@@ -141,15 +136,16 @@ export class PomoTimerComponent implements OnDestroy {
   }
 
   stopTimer() {
-    if (this.timerOn) {
-      this.timerOn = false;
-      if (this.currentSetting == 'focusSession') {
-        // Add record to the database
-        const timespan = this.constructTimespan();
-        this.timespanService.createTimespan(timespan);
-      }
-      clearInterval(this.clockInterval);
+    if (!this.timerOn) {
+      return;
     }
+    this.timerOn = false;
+    if (this.currentSetting == 'focusSession') {
+      // Add record to the database
+      const timespan = this.constructTimespan();
+      this.timespanService.createTimespan(timespan);
+    }
+    clearInterval(this.clockInterval);
   }
 
   constructTimespan(): Timespan {
