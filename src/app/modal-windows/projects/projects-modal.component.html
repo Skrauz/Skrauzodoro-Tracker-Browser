@@ -21,12 +21,12 @@
           </td>
           <td class="d-flex flex-column width-options">
             <button type="button" class="btn btn-warning" (click)="openEditProject(project.name)">Edit <i class="fa-solid fa-pencil"></i></button>
-            <button type="button" class="btn btn-danger" (click)="deleteProject(project._id!)">Delete <i class="fa-solid fa-x"></i></button>
+            <button type="button" class="btn btn-danger" (click)="deleteProject(project.name)">Delete <i class="fa-solid fa-x"></i></button>
           </td>
         </tr>
       </tbody>
     </table>
-    <app-add-project (refresh)="refreshProjects()"></app-add-project>
+    <app-add-project (refreshProjects)="refreshProjects()"></app-add-project>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-primary" (click)="modalRef.close()">

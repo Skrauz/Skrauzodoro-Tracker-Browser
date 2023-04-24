@@ -70,12 +70,13 @@ export class ProjectsService {
   }
 
   // Update
-  updateProject(project: Project) {
+  updateProject(project: Project, oldName: string) {
+
     const projects = this.getProjects();
 
     let index: number = -1;
     projects.forEach((pr: Project, i) => {
-      if(pr.name === project.name) {
+      if(pr.name === oldName) {
         index = i;
       }
     })
@@ -89,12 +90,12 @@ export class ProjectsService {
   }
 
   // Delete
-  deleteProject(id: string) {
+  deleteProject(projectName: string) {
     const projects = this.getProjects();
 
     let index: number = -1;
     projects.forEach((pr: Project, i) => {
-      if(pr._id === id) {
+      if(pr.name === projectName) {
         index = i;
       }
     })
