@@ -20,21 +20,18 @@ import { OrderByPipe } from 'src/app/order-by-pipe/order-by.pipe';
 export class AnalyticsMainComponent implements OnInit {
   constructor(private timespansService: TimespansService) {}
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit() {
     this.applyLabelRange();
-    await this.refreshTimespans();
+    this.refreshTimespans();
     this.refreshChart();
   }
 
   @ViewChild(BaseChartDirective) mainChart?: BaseChartDirective;
 
   uniqueProjects?: string[];
+  timespans: Timespan[] = [];
 
   public chartType: ChartType = 'bar';
-
-  timespans$: Observable<Timespan[]> = new Observable();
-
-  timespans: Timespan[] = [];
 
   taskName?: string;
   projectName?: string;
@@ -56,23 +53,14 @@ export class AnalyticsMainComponent implements OnInit {
   }
 
   refreshTimespans() {
-    return new Promise<void>((resolve) => {
-      this.timespans$ = this.timespansService.getTimespans();
-      this.timespans$.subscribe((timespans) => {
-        this.timespans = timespans;
-
+        this.timespans = this.timespansService.getTimespans();
         let timespanProjects: string[] = [];
-        timespans.forEach((timespan) => {
+        this.timespans.forEach((timespan) => {
           if (timespan.project) {
             timespanProjects.push(timespan.project);
           }
         });
-
         this.uniqueProjects = [...new Set(timespanProjects)];
-
-        resolve();
-      });
-    });
   }
 
   async filterChart() {

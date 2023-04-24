@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import { Timespan } from '../../../database/timespans/timespanModel';
 import { formatDateEnGB } from './formatDate';
 
