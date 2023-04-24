@@ -43,12 +43,13 @@ export class PomoTimerComponent implements OnDestroy {
   timerOn = false;
   seconds = 0;
   pomoStreak = 0;
+
   startTime: Date = new Date();
   clockInterval?: NodeJS.Timer;
 
   ngOnInit(): void {
     this.refreshTimer(this.currentSetting);
-    this.projects = this.projectsService.getProjects();
+    this.refreshProjects();
   }
 
   ngOnDestroy() {
@@ -56,6 +57,10 @@ export class PomoTimerComponent implements OnDestroy {
     if (this.timerOn) {
       this.stopTimer();
     }
+  }
+
+  refreshProjects() {
+    this.projects = this.projectsService.getProjects();
   }
 
   setSetting(setting: 'focusSession' | 'shortBreak' | 'longBreak') {
