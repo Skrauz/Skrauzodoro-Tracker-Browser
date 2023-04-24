@@ -1,7 +1,7 @@
-# SkrauzodoroTracker - MEAN Time Tracking and Management Tool
+# SkrauzodoroTracker - Browser Edition
 
-Skrauzodoro Tracker is a customizable fullstack time tracking and management tool built with the MEAN (MongoDB, ExpressJS, Angular, NodeJS) stack. The application came from my need for a straightforward time tracking solution, capable of analysing gathered records.
-App is capable of tracking time spent working on specific tasks and projects using a classic stopwatch or a <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique" target="_blank">Pomodoro Technique</a>.
+Skrauzodoro Tracker Browser Edition is a clientside only version of [Skrauzodoro Tracker](https://github.com/Skrauz/SkrauzodoroTracker-Client). Backend infrastructure is replaced with local storage.
+## See it live here:
 
 <hr>
 
