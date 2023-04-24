@@ -3,6 +3,7 @@ import { MdbModalRef } from 'mdb-angular-ui-kit/modal';
 import { ProjectsService } from 'src/app/database/projects/projects.service';
 import { Project } from 'src/app/database/projects/projectModel';
 import { ProjectsModalComponent } from '../projects-modal.component';
+import { Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-edit-project',
@@ -22,7 +23,7 @@ import { ProjectsModalComponent } from '../projects-modal.component';
               type="text"
               id="form1"
               class="form-control"
-              [(ngModel)]="this.project.name"
+              [(ngModel)]="this.name"
               required
             />
             <label mdbLabel class="form-label" for="form1">Project Name</label>
@@ -76,9 +77,10 @@ export class EditProjectComponent implements OnInit {
       alert('Project name is required');
       return;
     }
-    this.projectsService.updateProject(this.project);
-    this.projectsModalComponent.refreshProjects();
+
+    const oldName = this.project.name;
+    this.project.name = this.name;
+    this.projectsService.updateProject(this.project, oldName);
     this.modalRef.close();
-    this.name = '';
   }
 }

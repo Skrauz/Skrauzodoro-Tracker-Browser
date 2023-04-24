@@ -46,10 +46,14 @@ export class ProjectsModalComponent implements OnInit {
     this.editProjectModalRef = this.modalService.open(EditProjectComponent, {
       data: { name: name$ },
     });
+
+    this.editProjectModalRef.onClose.subscribe(() => {
+      this.refreshProjects();
+    })
   }
 
-  deleteProject(id: string) {
-    this.projectsService.deleteProject(id);
+  deleteProject(projectName: string) {
+    this.projectsService.deleteProject(projectName);
     this.refreshProjects();
   }
 }

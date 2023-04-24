@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ProjectsService } from 'src/app/database/projects/projects.service';
 import { ProjectsModalComponent } from '../projects-modal.component';
+import { Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-add-project',
@@ -39,6 +40,8 @@ export class AddProjectComponent {
     private projectsModalComponent: ProjectsModalComponent
   ) {}
 
+  @Output() refreshProjects = new EventEmitter();
+
   projectName: string = '';
 
   addProject(projectName: string) {
@@ -46,5 +49,6 @@ export class AddProjectComponent {
 
     this.projectsService.createProject({ name: projectName });
     this.projectName = '';
+    this.refreshProjects.next('');
   }
 }
