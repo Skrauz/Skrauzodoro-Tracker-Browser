@@ -9,6 +9,9 @@ import { Project } from 'src/app/database/projects/projectModel';
 
 import { EditProjectComponent } from './edit-project/edit-project.component';
 
+import { Store } from '@ngxs/store';
+import { RefreshProjects } from 'src/app/actions/projects.actions';
+
 @Component({
   selector: 'app-projects',
   templateUrl: './projects-modal.component.html',
@@ -25,7 +28,8 @@ export class ProjectsModalComponent implements OnInit {
   constructor(
     public modalRef: MdbModalRef<ProjectsModalComponent>,
     private projectsService: ProjectsService,
-    private modalService: MdbModalService
+    private modalService: MdbModalService,
+    private store: Store
   ) {}
 
   showFinishedProjects?: boolean;
@@ -40,6 +44,9 @@ export class ProjectsModalComponent implements OnInit {
 
   refreshProjects() {
     this.projects = this.projectsService.getProjects();
+
+    // Globally refresh projects
+    this.store.dispatch(new RefreshProjects());
   }
 
   openEditProject(name$: string) {
@@ -49,7 +56,7 @@ export class ProjectsModalComponent implements OnInit {
 
     this.editProjectModalRef.onClose.subscribe(() => {
       this.refreshProjects();
-    })
+    });
   }
 
   deleteProject(projectName: string) {

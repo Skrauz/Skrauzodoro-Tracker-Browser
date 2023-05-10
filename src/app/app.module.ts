@@ -42,6 +42,9 @@ import { AnalyticsMainComponent } from './pages/analytics/analytics-main/analyti
 
 import { OrderByPipe } from './order-by-pipe/order-by.pipe';
 
+import { NgxsModule } from '@ngxs/store';
+import { ProjectsState } from './states/projects.state';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,7 +82,8 @@ import { OrderByPipe } from './order-by-pipe/order-by.pipe';
     MdbFormsModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    NgChartsModule
+    NgChartsModule,
+    NgxsModule.forRoot([ProjectsState], {developmentMode: true})
   ],
   providers: [ProjectsModalComponent, AnalyticsMainComponent],
   bootstrap: [AppComponent],

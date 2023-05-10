@@ -8,6 +8,10 @@ import { ProjectsService } from 'src/app/database/projects/projects.service';
 import { SettingsService } from 'src/app/settings-service/settings.service';
 import { OrderByPipe } from 'src/app/order-by-pipe/order-by.pipe';
 
+import { Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
+
+
 @Component({
   selector: 'app-pomo-timer',
   templateUrl: './pomo-timer.component.html',
@@ -22,8 +26,13 @@ export class PomoTimerComponent implements OnDestroy {
     private titleService: Title,
     private settingsService: SettingsService,
     public soundService: SoundService,
-    private projectsService: ProjectsService
-  ) {}
+    private projectsService: ProjectsService,
+    private store: Store
+  ) {
+    this.refreshProjects$ = this.store.select(state => state)
+  }
+
+  refreshProjects$: Observable<void>;
 
   projects: Project[] = [];
 
@@ -50,6 +59,10 @@ export class PomoTimerComponent implements OnDestroy {
   ngOnInit(): void {
     this.refreshTimer(this.currentSetting);
     this.refreshProjects();
+
+    this.refreshProjects$.subscribe(() => {
+      this.refreshProjects();
+    })
   }
 
   ngOnDestroy() {
