@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { State, Action, StateContext } from '@ngxs/store';
-import { RefreshProjects } from '../actions/projects.actions';
+import { RefreshProjects } from './projects.actions';
 
 @State<ProjectsStateModel>({
   name: 'projectsState',

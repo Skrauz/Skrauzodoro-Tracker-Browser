@@ -10,7 +10,7 @@ import { Project } from 'src/app/database/projects/projectModel';
 import { EditProjectComponent } from './edit-project/edit-project.component';
 
 import { Store } from '@ngxs/store';
-import { RefreshProjects } from 'src/app/actions/projects.actions';
+import { RefreshProjects } from 'src/app/states/projects.actions';
 
 @Component({
   selector: 'app-projects',
