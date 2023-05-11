@@ -7,6 +7,9 @@ import { Project } from 'src/app/database/projects/projectModel';
 import { ProjectsService } from 'src/app/database/projects/projects.service';
 import { OrderByPipe } from 'src/app/order-by-pipe/order-by.pipe';
 
+import { Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
+
 
 @Component({
   selector: 'app-tracker',
@@ -18,14 +21,22 @@ export class TrackerComponent implements OnDestroy, OnInit {
     private timespanService: TimespansService,
     private titleService: Title,
     public soundService: SoundService,
-    private projectsService: ProjectsService
+    private projectsService: ProjectsService,
+    private store: Store
   ) {
     this.refreshTimer();
+    this.refreshProjects$ = this.store.select(state => state)
   }
 
   ngOnInit(): void {
+    this.refreshProjects();
+
+    this.refreshProjects$.subscribe(() => {
       this.refreshProjects();
+    })
   }
+
+  refreshProjects$: Observable<void>;
 
   projects: Project[] = [];
 
@@ -35,7 +46,7 @@ export class TrackerComponent implements OnDestroy, OnInit {
 
   ngOnDestroy() {
     this.titleService.setTitle('Skrauzodoro Timer');
-    if(this.timerOn) {
+    if (this.timerOn) {
       this.stopTracker();
     }
   }
